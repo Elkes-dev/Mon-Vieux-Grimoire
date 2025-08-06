@@ -48,6 +48,10 @@ exports.createBook = async(req,res,next)=>{
         const bookObject = await JSON.parse(req.body.book);
         delete bookObject._id;
         delete bookObject.userId;
+
+    if(!req.file || !req.file.filename ){
+        return res.status(400).json({message: "Erreur dans l'optimisation de l'image"})
+    }
         const newBookCreate= new Books({
             ...bookObject,
             userId : req.auth.userId,
@@ -79,12 +83,16 @@ exports.modifyBooks = async (req,res,next)=>{
         } : {...req.body}
 
         delete bookObject.userId
- console.log('Objet de mise à jour (bookObject):', bookObject);
+             console.log('Objet de mise à jour (bookObject):', bookObject);
+
         const book = await Books.findOne({_id: req.params.id})
             if(book.userId != req.auth.userId){
                 return res.status(403).json({error : 'unauthorized request'})
             }
             if(req.file){
+                if(!req.file.filename){
+                    return res.status(400).json({message : "Erreur d'optimisation de l'image"}) 
+                }
                 const filename = book.imageUrl.split('/images/')[1];
                 fs.unlink(`images/${filename}`, 
                     (error) =>{

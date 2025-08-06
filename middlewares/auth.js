@@ -11,6 +11,7 @@ module.exports = (req,res,next)=>{
         next();
     }
     catch(error){
-        res.status(500).json({error})
+        console.error('Erreur d\'authentification:', error);
+        res.status(403).json({message : 'unauthorized request'})
     }
 }
