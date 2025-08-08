@@ -1,5 +1,4 @@
 const Books = require('../models/books');
-const mongoose = require('mongoose');
 const fs = require('fs')
 
 
@@ -18,7 +17,7 @@ exports.singleBook = async(req,res,next)=>{
     try{
         const bookOne = await Books.findOne({_id:req.params.id})
         if(!bookOne){
-            return res.status(404).json();
+            return res.status(404).json({ message: "Livre non trouvé" });
         }
         res.status(200).json(bookOne);
     }
@@ -43,7 +42,7 @@ exports.createBook = async(req,res,next)=>{
     return res.status(400).json({ message: 'book manquant' });
   }
     try{
-        const bookObject = await JSON.parse(req.body.book);
+        const bookObject =  JSON.parse(req.body.book);
         delete bookObject._id;
         delete bookObject.userId;
 
@@ -74,7 +73,7 @@ exports.modifyBooks = async (req,res,next)=>{
         const bookObject =  req.file ? {
             ...JSON.parse(req.body.book), 
             imageUrl :  `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        } : JSON.parse(...req.body.book)
+        } : JSON.parse(req.body.book)
 
         delete bookObject.userId
              
@@ -109,7 +108,7 @@ exports.deleteBook = async(req,res,next)=>{
     try{
         const book = await Books.findOne({_id : req.params.id})
             if(book.userId != req.auth.userId){
-                return res.status(403).json({message : 'unautorized request'})
+                return res.status(403).json({message : 'unauthorized request'})
             }else{
                 const filename =  book.imageUrl.split('images/')[1];
                 fs.unlink(`images/${filename}`, async(error)=>{
@@ -137,9 +136,9 @@ exports.ratingBooks = async (req,res,next)=>{
         if(isRated){
             return res.status(400).json({message : "Vous avez déjà noté ce livre"})
         }else{
-            const grade = (req.body.rating)
+            const grade = Number(req.body.rating)
                 if(grade < 0 || grade > 5 ){
-                    return res.status(400).json({message : 'Erreur'})
+                    return res.status(400).json({message : 'Note invalide (doit être entre 0 et 5'})
                 }
                 else{
                     book.ratings.push({
