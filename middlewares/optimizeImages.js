@@ -1,7 +1,7 @@
 const sharp = require('sharp')
 const path = require('path')
 const fs = require('fs')
-const storage = require('../middlewares/multer-config')
+
 
 
 module.exports = async(req,res,next) =>{
