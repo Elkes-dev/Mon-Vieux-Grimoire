@@ -38,9 +38,7 @@ exports.bestRating = async(req,res,next)=>{
 }
 
 exports.createBook = async(req,res,next)=>{
-    console.log('📩 createBook exécuté');
-  console.log('📦 req.body:', req.body);
-  console.log('🖼️ req.file:', req.file);
+    
   if (!req.body.book) {
     return res.status(400).json({ message: 'book manquant' });
   }
@@ -71,11 +69,7 @@ exports.createBook = async(req,res,next)=>{
 
 
 exports.modifyBooks = async (req,res,next)=>{
-     // Loguez ce que vous recevez pour comprendre l'état initial
-        console.log('Requête reçue pour modifier un livre:', req.params.id);
-        console.log('req.file:', req.file); // Y a-t-il un fichier ?
-        console.log('req.body:', req.body); // Que contient le corps de la requête ?
-
+    
     try{
         const bookObject =  req.file ? {
             ...JSON.parse(req.body.book), 
@@ -83,7 +77,7 @@ exports.modifyBooks = async (req,res,next)=>{
         } : JSON.parse(...req.body.book)
 
         delete bookObject.userId
-             console.log('Objet de mise à jour (bookObject):', bookObject);
+             
 
         const book = await Books.findOne({_id: req.params.id})
             if(book.userId != req.auth.userId){
@@ -103,7 +97,7 @@ exports.modifyBooks = async (req,res,next)=>{
                 }
             
             await  Books.updateOne({_id: req.params.id},{...bookObject, _id : req.params.id})
-            console.log('Livre trouvé dans la base de données (avant mise à jour):', book);
+            
             res.status(200).json({message : 'Livre modifié !'})
     }
     catch (error){
