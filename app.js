@@ -1,7 +1,7 @@
 require('dotenv').config();
 const uri = process.env.MONGO_URI;
 const path = require('path')
-const multer = require('multer')
+
 
 const express = require('express');
 const mongoose = require('mongoose');
