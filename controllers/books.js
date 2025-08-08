@@ -80,7 +80,7 @@ exports.modifyBooks = async (req,res,next)=>{
         const bookObject =  req.file ? {
             ...JSON.parse(req.body.book), 
             imageUrl :  `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        } : JSON.parse(...req.body)
+        } : JSON.parse(...req.body.book)
 
         delete bookObject.userId
              console.log('Objet de mise à jour (bookObject):', bookObject);
@@ -117,7 +117,7 @@ exports.deleteBook = async(req,res,next)=>{
             if(book.userId != req.auth.userId){
                 return res.status(403).json({message : 'unautorized request'})
             }else{
-                const filename = await book.imageUrl.split('images/')[1];
+                const filename =  book.imageUrl.split('images/')[1];
                 fs.unlink(`images/${filename}`, async(error)=>{
                     if(error){
                         return res.status(500).json({message : 'Erreur !' })
