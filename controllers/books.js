@@ -61,8 +61,8 @@ exports.createBook = async(req,res,next)=>{
     }
     catch(error){
         res.status(400).json({ error: error.message,
-  body: req.body,
-  file: req.file})
+        body: req.body,
+        file: req.file})
     }
 }
 
