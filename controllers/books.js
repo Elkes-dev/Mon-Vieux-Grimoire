@@ -50,11 +50,17 @@ exports.createBook = async(req,res,next)=>{
         return res.status(400).json({message: "Erreur dans l'optimisation de l'image"})
     }
         const newBookCreate= new Books({
-            ...bookObject,
+            title : bookObject.title,
+            author : bookObject.author,
+            year :  bookObject.year,
+            genre : bookObject.genre,
             userId : req.auth.userId,
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-            averageRating : 0,
-            ratings :[]
+            averageRating : bookObject.ratings[0].grade,
+            ratings :[{
+                userId : req.auth.userId,
+                grade : bookObject.ratings[0].grade
+            }]
         })
         await newBookCreate.save();
         res.status(201).json({message : 'Livre enregistré !'})
@@ -68,12 +74,12 @@ exports.createBook = async(req,res,next)=>{
 
 
 exports.modifyBooks = async (req,res,next)=>{
-    
     try{
+    
         const bookObject =  req.file ? {
             ...JSON.parse(req.body.book), 
             imageUrl :  `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        } : JSON.parse(req.body.book)
+        } : (req.body.book  ? JSON.parse(req.body.book) : req.body)
 
         delete bookObject.userId
              
