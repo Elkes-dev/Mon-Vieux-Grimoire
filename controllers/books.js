@@ -132,10 +132,10 @@ exports.deleteBook = async(req,res,next)=>{
 }
 
 exports.ratingBooks = async (req,res,next)=>{
-     const bookId = req.params.id;
-  if (!bookId) {
-    return res.status(400).json({ message: "Book ID is required." });
-  }
+    const bookId = req.params.id;
+        if (!bookId) {
+            return res.status(400).json({ message: "Book ID is required." });
+        }
     try{
         const book = await Books.findOne({_id: req.params.id})
             const isRated = book.ratings.some((rating) => rating.userId === req.auth.userId)
@@ -144,7 +144,7 @@ exports.ratingBooks = async (req,res,next)=>{
         }else{
             const grade = Number(req.body.rating)
                 if(grade < 0 || grade > 5 ){
-                    return res.status(400).json({message : 'Note invalide (doit être entre 0 et 5'})
+                    return res.status(400).json({message : 'Note invalide (doit être entre 0 et 5)'})
                 }
                 else{
                     book.ratings.push({
